@@ -7,27 +7,11 @@ const UserContext = createContext<{user:any,setUser:any}>({
 
 
 export const UserProvider = ({children}:{children:React.ReactNode}) => {
-  const [user,setUser] = useState({
+  const [user,setUser] = useState( JSON.parse(localStorage.getItem("user") || "{}") || {
     isAuthenticated:false,
     user:null
   })
 
-  console.log(user,"updated user here")
-
-  useEffect(()=>{
-      const localuser = localStorage.getItem("user")
-      // update local storage
-      if(!localuser) localStorage.setItem("user",JSON.stringify(user))
-      if(localuser) {
-        const parsed = JSON.parse(localuser)
-        if(!parsed.isAuthenticated && user.isAuthenticated) localStorage.setItem("user",JSON.stringify(user))
-      }
-  },[user])
-
-  useEffect(()=>{
-    const localuser = localStorage.getItem("user")
-    if(localuser && !user.isAuthenticated) setUser(JSON.parse(localuser))
-  },[])
 
   return <UserContext.Provider value={{user,setUser}}>{children}</UserContext.Provider>
 

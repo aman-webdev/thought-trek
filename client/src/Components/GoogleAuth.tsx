@@ -32,6 +32,7 @@ const GoogleAuth = () => {
       const {message,data:userData} = data;
       toast.success(message)
       setUser({isAuthenticated:true,user:userData})
+      localStorage.setItem("user",JSON.stringify({user:userData,isAuthenticated:true}))
       navigate("/")
 
     }
@@ -44,7 +45,6 @@ const GoogleAuth = () => {
     <div className="w-full mt-2 flex items-center justify-center">
     
     <GoogleLogin
-      useOneTap
       size="medium"
       theme="outline"
       shape="circle"

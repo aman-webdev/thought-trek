@@ -19,7 +19,7 @@ const SignUp = () => {
     }
   })
 
-  const {setUser} = useContext(UserContext)
+  const {setUser,user} = useContext(UserContext)
 
 
   const navigate = useNavigate()
@@ -50,8 +50,13 @@ const SignUp = () => {
     console.log(message,data)
     toast.success(message)
     setUser({user:userinfo,isAuthenticated:true}) 
+    localStorage.setItem("user",JSON.stringify({user:userinfo,isAuthenticated:true}))
     navigate("/")
   },[data])
+
+  useEffect(()=>{
+    if(user.isAuthenticated) navigate("/")
+  },[user])
 
   return (
     <div className="h-screen flex flex-col justify-center ">

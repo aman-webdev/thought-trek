@@ -2,12 +2,13 @@
 import { useForm } from "react-hook-form"
 import { Button, Input, Text } from "../Components";
 import Signup from "../assets/signup.svg?react";
-import { Link } from "react-router-dom";
+import { Link, Navigate, useNavigate } from "react-router-dom";
 import useFetch from "../hooks/useFetch";
 import toast, { Toaster } from 'react-hot-toast';
 import { BarLoader } from "react-spinners";
-import { useEffect } from "react";
+import { useContext, useEffect } from "react";
 import GoogleAuth from "../Components/GoogleAuth";
+import UserContext from "../context/userContext";
 
 const SignUp = () => {
 
@@ -20,6 +21,8 @@ const SignUp = () => {
   })
 
   const {data,error,loading,fetchData} = useFetch("POST")
+  const navigate = useNavigate()
+  const {user} =useContext(UserContext)
 
 
   const handleFormSubmit=async(data:any) =>{
@@ -38,7 +41,12 @@ const SignUp = () => {
   useEffect(()=>{
     if(!isSubmitSuccessful) return;
     reset({username:"",password:"",email:""})
+    navigate("/sign-in")
   },[isSubmitSuccessful])
+
+  useEffect(()=>{
+    if(user?.isAuthenticated) navigate("/")
+  },[user])
 
 
   return (
