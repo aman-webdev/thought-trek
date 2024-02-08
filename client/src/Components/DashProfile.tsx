@@ -11,6 +11,7 @@ import { BarLoader } from "react-spinners";
 import Modal from "react-modal"
 import Throw from "../assets/throw.svg?react"
 import { useNavigate } from "react-router-dom";
+import useSignout from "../hooks/useSignout";
 
 
 
@@ -28,8 +29,10 @@ const DashProfile = () => {
   const profileRef = useRef<HTMLInputElement>(null)
   const {data,error,loading,fetchData} = useFetch("PUT")
   const {data:deleteData,error:deleteError,loading:deleteLoading,fetchData:deleteFetch} = useFetch("DELETE")
+  const {data:signoutData,loading:signoutLoading,error:signoutError,signoutUser} = useSignout()
+  
 
-  const [isDeleteModalOpen,setIsDeleteModalOpen] = useState(true)
+  const [isDeleteModalOpen,setIsDeleteModalOpen] = useState(false)
 
   const {register,reset,formState:{errors},handleSubmit} = useForm({
     defaultValues:{
@@ -112,6 +115,14 @@ const DashProfile = () => {
     }
   }
 
+  const handleSignout = async() => {
+    await signoutUser()
+  }
+
+  useEffect(()=>{
+    if(signoutError) toast.error(signoutError)
+  },[signoutError])
+
   return (
     <div className="w-full flex flex-col justify-center items-center ">
       <h1 className="font-display text-text-accent opacity-50 uppercase text-6xl tracking-wide text-center mt-12 font-bold">
@@ -137,7 +148,7 @@ const DashProfile = () => {
       </div>
       <div className="w-1/3 mx-auto mt-4 text-sm flex justify-between items-center">
         <p onClick={()=>setIsDeleteModalOpen(true)} className="text-red-600 cursor-pointer">Delete Account</p>
-        <p className="cursor-pointer">Sign Out</p>
+        <p onClick={handleSignout} className="cursor-pointer">Sign Out</p>
       </div>
       <Modal ariaHideApp={false} style={{content:{width:"70%",height:"70%",top:"50%",left:"50%",transform:"translate(-50%,-50%)"}}}  shouldCloseOnEsc onRequestClose={()=>setIsDeleteModalOpen(!isDeleteModalOpen)} isOpen={isDeleteModalOpen} contentLabel="Delete Profile" >
           <div>

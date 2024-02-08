@@ -3,9 +3,11 @@ import Logo from "../assets/logo.svg?react";
 import Avatar from "../assets/user-avatar.svg?react";
 
 import { Input, Button } from ".";
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import UserContext from "../context/userContext";
 import { Link, useNavigate } from "react-router-dom";
+import useSignout from "../hooks/useSignout";
+import toast from "react-hot-toast";
 
 const Header = () => {
   const [searchInput, setSearchInput] = useState("");
@@ -13,11 +15,15 @@ const Header = () => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const navigate = useNavigate()
 
-  const handleLogout=()=>{
-    localStorage.removeItem("user")
-    setUser({isAuthenticated:false,user:null})
-    navigate("/")
+  const {signoutUser,error:signoutError} = useSignout()
+
+  const handleLogout=async()=>{
+    await signoutUser()
   }
+
+  useEffect(()=>{
+    if(signoutError) toast.error(signoutError)
+  },[signoutError])
 
   return (
     <header className="px-12 mt-2 flex items-center justify-between w-full z-50">
