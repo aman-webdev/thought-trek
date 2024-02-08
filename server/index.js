@@ -25,8 +25,6 @@ app.use(express.urlencoded({ extended:true}))
 
 app.use("/api/user",userRoute)
 app.use("/api/auth",authRoute)
-app.use("/api/upload-image",uploadHandler.single('image'),(req,res)=>{
-})
 
 app.listen(3000,()=>{
 })

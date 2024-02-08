@@ -1,6 +1,6 @@
 import { useState } from "react"
 
-const useFetch = (method:"GET"| "POST" | "PUT") => {
+const useFetch = (method:"GET"| "POST" | "PUT" | "DELETE") => {
     const [data,setData] = useState()
     const [error,setError]=useState('')
     const [loading,setLoading] = useState(false)

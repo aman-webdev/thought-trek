@@ -8,18 +8,28 @@ import { useForm } from "react-hook-form";
 import useFetch from "../hooks/useFetch";
 import toast from "react-hot-toast";
 import { BarLoader } from "react-spinners";
+import Modal from "react-modal"
+import Throw from "../assets/throw.svg?react"
+import { useNavigate } from "react-router-dom";
+
+
 
 const DashProfile = () => {
   const {
     user: { user },
     setUser,
   } = useContext(UserContext);
+
+  const navigate = useNavigate()
   
 
   const [imageFile,setImageFile] = useState<any>('')
   const [imgFIleUrl,setImgFileUrl] = useState('')
   const profileRef = useRef<HTMLInputElement>(null)
   const {data,error,loading,fetchData} = useFetch("PUT")
+  const {data:deleteData,error:deleteError,loading:deleteLoading,fetchData:deleteFetch} = useFetch("DELETE")
+
+  const [isDeleteModalOpen,setIsDeleteModalOpen] = useState(true)
 
   const {register,reset,formState:{errors},handleSubmit} = useForm({
     defaultValues:{
@@ -85,6 +95,23 @@ const DashProfile = () => {
     profileRef.current.click()
   }
 
+  useEffect(()=>{
+    if(deleteError) toast.error(deleteError)
+  },[deleteError])
+
+  const handleProfileDelete=async()=>{
+    if(!user) return;
+    try{
+      await deleteFetch("/api/user/delete/"+user._id)
+      toast.success("Profile deleted successfully")
+      setUser({isAuthenticated:false,user:null})
+      localStorage.setItem("user",JSON.stringify({isAuthenticated:false,user:null}))
+      navigate("/sign-in")
+    }catch(err:any){
+      toast.error(err.message || "Something went wrong")
+    }
+  }
+
   return (
     <div className="w-full flex flex-col justify-center items-center ">
       <h1 className="font-display text-text-accent opacity-50 uppercase text-6xl tracking-wide text-center mt-12 font-bold">
@@ -109,10 +136,20 @@ const DashProfile = () => {
            { loading ? <BarLoader width={'100%'} height={10} color="#3F3D56" className="mt-3"  /> : <Button onClick={handleSubmit(handleUpdateProfile)} className="w-full mt-8  py-3 rounded-lg bg-text-accent text-white">Update Profile</Button>}
       </div>
       <div className="w-1/3 mx-auto mt-4 text-sm flex justify-between items-center">
-        <p className="text-red-600 cursor-pointer">Delete Account</p>
+        <p onClick={()=>setIsDeleteModalOpen(true)} className="text-red-600 cursor-pointer">Delete Account</p>
         <p className="cursor-pointer">Sign Out</p>
-
       </div>
+      <Modal ariaHideApp={false} style={{content:{width:"70%",height:"70%",top:"50%",left:"50%",transform:"translate(-50%,-50%)"}}}  shouldCloseOnEsc onRequestClose={()=>setIsDeleteModalOpen(!isDeleteModalOpen)} isOpen={isDeleteModalOpen} contentLabel="Delete Profile" >
+          <div>
+            <h2 className="font-display text-6xl uppercase my-12 text-center text-text-accent">Delete Profile?</h2>
+            <Throw className='w-1/3 mx-auto h-1/3'/>
+            <div className="mt-12 flex w-1/2 justify-between items-center mx-auto">
+              <Button onClick={handleProfileDelete} className="bg-red-400  text-white px-8 py-2 rounded-md">Delete</Button>
+              <Button onClick={()=>setIsDeleteModalOpen(!isDeleteModalOpen)} className="bg-none outline outline-accent px-8 py-2 rounded-md">Cancel</Button>
+
+            </div>
+          </div>
+      </Modal>
     </div>
   );
 };
