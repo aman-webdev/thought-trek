@@ -1,9 +1,15 @@
-import { useState } from "react"
+import { useContext, useState } from "react"
+import UserContext from "../context/userContext"
+import useSignout from "./useSignout"
+import { useNavigate } from "react-router-dom"
+import toast from "react-hot-toast"
 
 const useFetch = (method:"GET"| "POST" | "PUT" | "DELETE") => {
     const [data,setData] = useState()
     const [error,setError]=useState('')
     const [loading,setLoading] = useState(false)
+    const navigate = useNavigate()
+    const {setUser} = useContext(UserContext)
 
     const fetchData=async(url:string,formData?:any,noType?:boolean) => {
         try{
@@ -22,8 +28,19 @@ const useFetch = (method:"GET"| "POST" | "PUT" | "DELETE") => {
             setData(response)
             setLoading(false)
         } catch(e:any){
+           
             setLoading(false)
+            if(e) {
+                if(e.message?.includes("jwt expired")) {
+                    toast.error("Your session has expired")
+                    localStorage.clear()
+                    setUser({isAuthenticated:false,user:null})
+                    navigate("/")
+
+                }
+            }
             throw new Error(e.message)
+
         }
     }
 

@@ -27,8 +27,9 @@ export const signin = async (req, res,next) => {
     }
 
     const token = jwt.sign({
-      id:userData._id
-    } , process.env.JWT_SECRET_KEY)
+      id:userData._id,
+      isAdmin:userData.isAdmin
+    } , process.env.JWT_SECRET_KEY,{expiresIn:"1 hour"})
     
     const {password:userPass,...restUser} = userData;
 
@@ -77,7 +78,7 @@ export const googleAuth=async(req,res,next) => {
   // check if user exists with this email
   let userData = await User.findOne({email}).lean()
   if(userData) {
-    const tokenData = jwt.sign({id:userData._id},process.env.JWT_SECRET_KEY)
+    const tokenData = jwt.sign({id:userData._id,isAdmin:userData.isAdmin},process.env.JWT_SECRET_KEY,{expiresIn:"1 hour"})
     delete userData.password
     return res.status(200).cookie("access_token",tokenData,{httpOnly:true}).json({message:"Signin Successfull",data:userData})
   }
@@ -91,7 +92,7 @@ export const googleAuth=async(req,res,next) => {
 
   const {password:existingPass,...restUser} = newuser._doc
 
-  const tokenData = jwt.sign({id:newuser._id},process.env.JWT_SECRET_KEY)
+  const tokenData = jwt.sign({id:newuser._id,isAdmin:newuser.isAdmin},process.env.JWT_SECRET_KEY,{expiresIn:"1 hour"})
 
   return res.status(200).cookie("access_token",tokenData,{httpOnly:true}).json({message:"Signin Successfull",data:newUser})
 
