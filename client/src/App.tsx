@@ -7,6 +7,7 @@ import toast, { Toaster } from "react-hot-toast";
 import { UserProvider } from "./context/userContext";
 import { GoogleOAuthProvider } from '@react-oauth/google';
 import PrivateRoute from "./Components/PrivateRoute";
+import DashProfile from "./Components/DashProfile";
 
 
 const Layout = ()=>{
@@ -29,6 +30,10 @@ const router = createBrowserRouter([
         element:<PrivateRoute><About /></PrivateRoute> ,
       },
       {
+        path: "/profile",
+        element:<PrivateRoute><DashProfile /></PrivateRoute> ,
+      },
+      {
         path: "/sign-in",
         element: <SignIn />,
       },
@@ -47,7 +52,6 @@ const router = createBrowserRouter([
     ]
   }
 ]);
-console.log(import.meta.env.VITE_CLIENT_ID,"id")
 
 const App = () => (
   <div className="px-8">

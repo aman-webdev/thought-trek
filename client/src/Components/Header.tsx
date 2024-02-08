@@ -5,7 +5,7 @@ import Avatar from "../assets/user-avatar.svg?react";
 import { Input, Button } from ".";
 import { useContext, useState } from "react";
 import UserContext from "../context/userContext";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const Header = () => {
   const [searchInput, setSearchInput] = useState("");
@@ -20,8 +20,8 @@ const Header = () => {
   }
 
   return (
-    <header className="px-12 mt-2 flex items-center justify-between w-full">
-      <Logo className="w-12 h-12 fill-gray-800" />
+    <header className="px-12 mt-2 flex items-center justify-between w-full z-50">
+      <Link to={'/'}><Logo className="w-12 h-12 fill-gray-800" /></Link>
       <Input
         type="string"
         placeholder="Search"
@@ -38,7 +38,7 @@ const Header = () => {
         </Button>
         <div className="relative px-2 ">
           {user.isAuthenticated ? (
-            user.user.profilePicture ? (
+            user?.user?.profilePicture ? (
               <img
                 src={user.user.profilePicture}
                 className="w-12 h-12 rounded-full"
@@ -48,10 +48,10 @@ const Header = () => {
               <Avatar className="w-12 h-12" />
             )
           ) : null}
-          {user.isAuthenticated && isDropdownOpen && <div className="absolute text-sm -left-1/2 top-3/4  rounded-md bg-white px-6 py-2 text-center">
+          {user.isAuthenticated && isDropdownOpen && <div className="absolute text-sm -left-1/2 top-3/4  rounded-md bg-white px-6 py-2 text-center z-50">
             <p className=" border-b border-spacing-2 border-gray-200 mb-2 hover:opacity-60">@{user.user.username}</p>
-            <p className="border-b border-spacing-2 border-gray-200 mb-2 hover:opacity-60">Profile</p>
-            <p onClick={handleLogout} className="hover:opacity-60">Logout</p>
+            <Link to={'/profile'} className=" block border-b border-spacing-2 border-gray-200 mb-2 hover:opacity-60">Profile</Link>
+            <p onClick={handleLogout} className="hover:opacity-60">logout</p>
             </div>}
         </div>
       </div>

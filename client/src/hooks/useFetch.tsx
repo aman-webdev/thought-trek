@@ -1,23 +1,22 @@
 import { useState } from "react"
 
-const useFetch = (method:"GET"| "POST") => {
+const useFetch = (method:"GET"| "POST" | "PUT") => {
     const [data,setData] = useState()
     const [error,setError]=useState('')
     const [loading,setLoading] = useState(false)
 
-    const fetchData=async(url:string,formData?:any) => {
-        console.log(method,'ttt')
+    const fetchData=async(url:string,formData?:any,noType?:boolean) => {
         try{
             setLoading(true)
             const res = await fetch(url,{
                 method,
                 headers:{
-                    "Content-Type": "application/json",
+                   ...(noType ? {} :  {"Content-Type": "application/json"})
     
                 },
-                ...(formData && {body:JSON.stringify(formData)})
+                ...(formData && {body: noType ? formData : JSON.stringify(formData)})
             })
-    
+            if(res.status===500) throw new Error("Internal Server Error")
             const response = await res.json()
             if(!res.ok) throw new Error(response.message || 'Internal Server Error') 
             setData(response)

@@ -47,7 +47,6 @@ const SignUp = () => {
   useEffect(()=>{
     if(!data) return
     const {message,data:userinfo} = data;
-    console.log(message,data)
     toast.success(message)
     setUser({user:userinfo,isAuthenticated:true}) 
     localStorage.setItem("user",JSON.stringify({user:userinfo,isAuthenticated:true}))

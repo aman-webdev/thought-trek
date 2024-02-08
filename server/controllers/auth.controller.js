@@ -7,7 +7,6 @@ export const signin = async (req, res,next) => {
   try{
 
     const {usernameOrEmail,password} = req.body;
-    console.log(req.body,"body")
     if(!usernameOrEmail || !password) {
       next(errorHandler(404,"Email / Username or password missing"))
       return;
@@ -43,7 +42,6 @@ export const signin = async (req, res,next) => {
 export const signup = async (req, res, next) => {
   try {
     const { username, email, password } = req.body;
-    console.log(!username || !email || !password);
     if (!username || !email || !password) {
       const error = errorHandler(400, "Required parameters missing");
       next(error);
@@ -54,6 +52,12 @@ export const signup = async (req, res, next) => {
     const existingUsername = await User.findOne({username})
     if(existingUsername) {
       next(errorHandler(401,"Username already exists"))
+      return
+    } 
+
+    const existingEmail = await User.findOne({email})
+    if(existingEmail) {
+      next(errorHandler(401,"Email already exists"))
       return
     } 
     const user = await User.create({ username, email, password: hashedPass });

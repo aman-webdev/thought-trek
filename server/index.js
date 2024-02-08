@@ -4,7 +4,11 @@ import { config } from "dotenv"
 import cors from "cors"
 import userRoute from "./routes/user.routes.js"
 import authRoute from "./routes/auth.routes.js"
-import {ErrorMiddleware} from "./middlewares/index.js"
+import {ErrorMiddleware,uploadHandler} from "./middlewares/index.js"
+import cookieParser from "cookie-parser"
+import fs from "fs"
+import path from "path"
+
 
 config()
 
@@ -16,12 +20,15 @@ const app = express()
 app.use(cors())
 
 app.use(express.json())
+app.use(cookieParser())
+app.use(express.urlencoded({ extended:true}))
 
 app.use("/api/user",userRoute)
 app.use("/api/auth",authRoute)
+app.use("/api/upload-image",uploadHandler.single('image'),(req,res)=>{
+})
 
 app.listen(3000,()=>{
-    console.log('first')
 })
 
 app.use(ErrorMiddleware)
