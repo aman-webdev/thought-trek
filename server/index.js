@@ -6,6 +6,7 @@ import userRoute from "./routes/user.routes.js"
 import authRoute from "./routes/auth.routes.js"
 import {ErrorMiddleware,uploadHandler} from "./middlewares/index.js"
 import cookieParser from "cookie-parser"
+import blogRoute from "./routes/blog.routes.js"
 import fs from "fs"
 import path from "path"
 
@@ -25,6 +26,8 @@ app.use(express.urlencoded({ extended:true}))
 
 app.use("/api/user",userRoute)
 app.use("/api/auth",authRoute)
+app.use("/api/blog",blogRoute)
+
 
 app.listen(3000,()=>{
 })

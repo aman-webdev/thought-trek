@@ -6,4 +6,29 @@ body{
     margin: 0;
     padding: 0;
     background-color: #F8F6F5;
+    font-family: 'Poppins', sans-serif;
+
+}
+
+*::selection{
+    background-color: #F9E197;
+    color: white;
+}
+
+.ql-toolbar.ql-snow{
+    background-color: none;
+        border: 2px dashed #3F3D56;
+    padding: 16px 10px;
+    font-size: 20px;
+    font-family: 'Staatliches', Courier, monospace;
+}
+
+.ql-container.ql-snow{
+    padding: 16px 10px;
+    border: 2px dashed #3F3D56;
+    min-height: 300px;
+
+}
+.ql-editor{
+    min-height: 300px;
 }

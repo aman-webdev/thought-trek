@@ -8,6 +8,7 @@ import { UserProvider } from "./context/userContext";
 import { GoogleOAuthProvider } from '@react-oauth/google';
 import PrivateRoute from "./Components/PrivateRoute";
 import DashProfile from "./Components/DashProfile";
+import CreateBlog from "./Components/CreateBlog";
 
 
 const Layout = ()=>{
@@ -48,6 +49,13 @@ const router = createBrowserRouter([
       {
         path: "/projects",
         element: <Projects />,
+      },
+      {
+        path: "/blog",
+        children:[{
+          path:"/blog/create",
+          element:<PrivateRoute><CreateBlog/></PrivateRoute>
+        }]
       },
     ]
   }
