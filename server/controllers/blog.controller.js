@@ -31,8 +31,31 @@ export const create=async(req,res,next)=>{
 
 export const getAllBlogs=async(req,res,next) =>{
     try{
-        const blogs = await Blog.find({})
-        return res.status(200).json({data:blogs})
+        const startIndex = parseInt(req.query.startIndex) || 0;
+        const limit = parseInt(req.query.limit) || 9 
+        const sortDirection = req.query.order === 'asc' ? 1 : -1;
+        const blogs = await Blog.find({
+            ...(req.query.userId && {_userId:req.query.userId}),
+            ...(req.query.category && {$in:{category:req.query.category}}),
+            ...(req.query.slug && {slug:req.query.slug}),
+            ...(req.query.blogId && {_id:req.query.blogId}),
+            ...(req.query.searchTerm && {
+                $or: [
+                    { 
+                        title:{$regex : req.query.searchTerm ,$options:"1"}
+                    },
+                    { 
+                        desc:{$regex : req.query.searchTerm ,$options:"1"}
+                    }
+                ]
+            })
+        }).sort({updatedAt : sortDirection}).skip(startIndex).limit(limit)
+
+    
+        const totalBlogs = await Blog.countDocuments();
+
+        res.status(200).json({data:{blogs,totalBlogs}})
+
     }catch(err){
         next(err)
     }

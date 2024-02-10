@@ -10,7 +10,7 @@ const Home = () => {
   const [blogs, setBlogs] = useState<Blog[]>([]);
 
   useEffect(() => {
-    if (blogsData) setBlogs(blogsData["data"]);
+    if (blogsData) setBlogs(blogsData["data"]['blogs']);
   }, [blogsData]);
 
   useEffect(() => {
@@ -25,8 +25,8 @@ const Home = () => {
           <BarLoader height={30} width={180} color="#3F3D56" />
         </div>
       ) : (
-        <div className="w-full h-full bg-yellow-50 flex my-12">
-          <div className="w-1/5 bg-yellow-100"></div>
+        <div className="w-full h-full flex my-12">
+          <div className="w-1/5 "></div>
           <div className="w-4/5 ">
             {blogs.map(blog=><BlogCard blog={blog} key={blog.slug} />)}
           </div>

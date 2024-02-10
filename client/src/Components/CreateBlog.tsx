@@ -111,7 +111,7 @@ const BlogPage = () => {
         placeholder="Title"
         name="title"
         register={register}
-        validation={{required:{value:true,message:"Title is required"},maxLength:{value:50,message:"Title Should have max 50 characters"}}}
+        validation={{required:{value:true,message:"Title is required"},minLength:{value:10,message:"Title Should have minimum 10 characters"},maxLength:{value:50,message:"Title Should have max 50 characters"}}}
         className="w-4/5 rounded-md bg-transparent mt-8 text-5xl  outline-none font-display px-12 py-6"
       />
           {errors.title?.message ? <p className="text-sm text-red-400 px-12">{errors.title.message.toString()}</p> : null}
@@ -120,7 +120,7 @@ const BlogPage = () => {
         type="text"
         name="desc"
         register={register}
-        validation={{required:{value:true,message:"Description is required"},maxLength:{value:100,message:"Description Should have max 100 characters"}}}
+        validation={{required:{value:true,message:"Description is required"},minLength:{value:10,message:"Description Should have minimum 10 characters"}, maxLength:{value:100,message:"Description Should have max 100 characters"}}}
         placeholder="Description"
         className="w-full  rounded-md  mt-1 bg-transparent focus:outline-none text-2xl  px-12 py-6 "
       />
