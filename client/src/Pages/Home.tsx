@@ -49,7 +49,7 @@ const Home = () => {
     <div className="w-full h-screen">
       {loading && !blogs.length ? (
         <div className="w-full h-full flex items-center justify-center">
-          <BarLoader height={30} width={180} color="#3F3D56" />
+          <BarLoader height={30} width={250} color="#3F3D56" />
         </div>
       ) : (
         <div className="w-full h-full flex">

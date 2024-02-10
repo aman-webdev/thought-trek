@@ -60,7 +60,7 @@ export const getAllBlogs=async(req,res,next) =>{
                     }
                 ]
             })
-        }).sort({updatedAt : sortDirection}).skip(startIndex).limit(limit)
+        }).populate("_userId",{username:1,profilePicture:1}).sort({updatedAt : sortDirection}).skip(startIndex).limit(limit)
 
     
         const totalBlogs = await Blog.countDocuments();

@@ -5,35 +5,49 @@ import { About, Dashboard, Home, Projects, SignIn, SignUp } from "./Pages";
 import { Header } from "./Components";
 import toast, { Toaster } from "react-hot-toast";
 import { UserProvider } from "./context/userContext";
-import { GoogleOAuthProvider } from '@react-oauth/google';
+import { GoogleOAuthProvider } from "@react-oauth/google";
 import PrivateRoute from "./Components/PrivateRoute";
 import DashProfile from "./Components/DashProfile";
 import CreateBlog from "./Components/CreateBlog";
+import Blog from "./Pages/Blog";
+import NotFound from "./Pages/NotFound";
 
-
-const Layout = ()=>{
- return <>
-  <Header/>
-  <Outlet/>
-  </>
-}
+const Layout = () => {
+  return (
+    <>
+      <Header />
+      <Outlet />
+    </>
+  );
+};
 
 const router = createBrowserRouter([
   {
-    element:<Layout/>,
-    children:[
+    element: <Layout />,
+    children: [
+      {
+        path:"*",
+        element:<NotFound/>
+      },
       {
         path: "/",
         element: <Home />,
-       
       },
       {
         path: "/about",
-        element:<PrivateRoute><About /></PrivateRoute> ,
+        element: (
+          <PrivateRoute>
+            <About />
+          </PrivateRoute>
+        ),
       },
       {
         path: "/profile",
-        element:<PrivateRoute><DashProfile /></PrivateRoute> ,
+        element: (
+          <PrivateRoute>
+            <DashProfile />
+          </PrivateRoute>
+        ),
       },
       {
         path: "/sign-in",
@@ -45,7 +59,11 @@ const router = createBrowserRouter([
       },
       {
         path: "/dashboard",
-        element: <PrivateRoute><Dashboard /></PrivateRoute>,
+        element: (
+          <PrivateRoute>
+            <Dashboard />
+          </PrivateRoute>
+        ),
       },
       {
         path: "/projects",
@@ -53,31 +71,45 @@ const router = createBrowserRouter([
       },
       {
         path: "/blog",
-        children:[{
-          path:"/blog/create",
-          element:<PrivateRoute><CreateBlog/></PrivateRoute>
-        } , 
-      {
-        path:"/blog/edit/:blogSlug",
-        element:<PrivateRoute><CreateBlog/></PrivateRoute>
-      }]
+
+        children: [
+          {
+            path:"/blog/:blogSlug",
+            element:<Blog/>
+          },
+          {
+            path: "/blog/create",
+            element: (
+              <PrivateRoute>
+                <CreateBlog />
+              </PrivateRoute>
+            ),
+          },
+          {
+            path: "/blog/edit/:blogSlug",
+            element: (
+              <PrivateRoute>
+                <CreateBlog />
+              </PrivateRoute>
+            ),
+          },
+        ],
       },
       {
-        path:"/creator/:username",
-        element:<Home/>
-        
-      }
-    ]
-  }
+        path: "/creator/:username",
+        element: <Home />,
+      },
+    ],
+  },
 ]);
 
 const App = () => (
   <div className="px-8">
     <GoogleOAuthProvider clientId={import.meta.env.VITE_CLIENT_ID}>
-    <UserProvider>
-      <RouterProvider router={router} />
-    </UserProvider>
-    <Toaster />
+      <UserProvider>
+        <RouterProvider router={router} />
+      </UserProvider>
+      <Toaster />
     </GoogleOAuthProvider>
   </div>
 );
