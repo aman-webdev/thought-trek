@@ -32,7 +32,7 @@ const Home = () => {
 
   useEffect(() => {
     const fetchUrl = username
-      ? `/api/blog?username=${username}&limit=1`
+      ? `/api/blog?username=${username}`
       : "/api/blog";
     fetchData(fetchUrl);
   }, [username]);
@@ -65,7 +65,7 @@ const Home = () => {
               </h1>
             )}
 
-            <div className=" text-center">
+            <div className=" ">
               {blogs.length ? (
                 <div className="w-2/3">
                   {blogs.map((blog) => (
@@ -77,7 +77,7 @@ const Home = () => {
                 <div>
                   <NoBlogIcon className="w-full" />
 
-                  <p className="text-4xl font-display text-text-accent my-8">
+                  <p className="text-4xl font-display text-center text-text-accent my-8">
                     Uhh..Oh No Blogs Found{" "}
                     {user.username !== username && (
                       <span className="text-accent"> for {username}</span>

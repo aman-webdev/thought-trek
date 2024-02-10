@@ -71,3 +71,21 @@ export const getAllBlogs=async(req,res,next) =>{
         next(err)
     }
 }
+
+export const deleteBlog=async(req,res,next)=>{
+    try{
+
+        const {blogId} = req.params;
+        const {user} = req.body;
+        const blog = await Blog.findOne({_id:blogId})
+        if(!blog) return next(errorHandler(400,'Blog not found'))
+        if(blog._userId.toString()!==user.id) next(errorHandler(401,'Unauthorized'))
+
+        await Blog.findByIdAndDelete(blogId)
+        res.status(201).json(
+            {message:'Deleted Successfully'}
+        )
+    }catch(err){
+        next(err)
+    }
+}
