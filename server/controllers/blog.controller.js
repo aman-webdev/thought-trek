@@ -2,6 +2,8 @@ import errorHandler from "../utils/errorHandler.js"
 import { uploadImage } from "../utils/initFirebase.js";
 import { v4 as uuidv4 } from 'uuid'
 import Blog from "../models/blog.model.js"
+import User from "../models/user.model.js"
+
 
 export const create=async(req,res,next)=>{
     try{
@@ -34,8 +36,17 @@ export const getAllBlogs=async(req,res,next) =>{
         const startIndex = parseInt(req.query.startIndex) || 0;
         const limit = parseInt(req.query.limit) || 9 
         const sortDirection = req.query.order === 'asc' ? 1 : -1;
+
+        let userId = req.query.userId
+        if(req.query.username) {
+            const user = await User.findOne({username:req.query.username})
+            userId = user?._id
+        }
+
         const blogs = await Blog.find({
             ...(req.query.userId && {_userId:req.query.userId}),
+            ...(req.query.username && {_userId:userId}),
+
             ...(req.query.category && {$in:{category:req.query.category}}),
             ...(req.query.slug && {slug:req.query.slug}),
             ...(req.query.blogId && {_id:req.query.blogId}),

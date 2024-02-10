@@ -30,9 +30,9 @@ const Dashboard = () => {
 
   return (
     <div className='  '>
-      <div className="absolute left-0 w-1/4 top-0 bottom-0 bg-white opacity-60  ">
+      <div className="flex ">
       
-        <div className='relative top-28'>
+        <div className=''>
         {ProfileLinks.map(link=><SidebarItem label={link.label} path={link.path} key={link.path} />)}
         </div>
         <div className=' absolute bottom-2  cursor-pointer left-2'>

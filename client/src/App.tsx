@@ -24,7 +24,8 @@ const router = createBrowserRouter([
     children:[
       {
         path: "/",
-        element: <PrivateRoute><Home /></PrivateRoute>,
+        element: <Home />,
+       
       },
       {
         path: "/about",
@@ -57,6 +58,15 @@ const router = createBrowserRouter([
           element:<PrivateRoute><CreateBlog/></PrivateRoute>
         }]
       },
+      {
+        path:"/creator",
+        children :[
+          {
+            path:"/creator/:username",
+            element:<Home/>
+          }
+        ]
+      }
     ]
   }
 ]);

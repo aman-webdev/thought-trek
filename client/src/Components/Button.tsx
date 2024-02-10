@@ -6,7 +6,7 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
 
 const Button = ({additionalStyles = '', children,...rest}:ButtonProps) => {
   return (
-    <button className={`${additionalStyles} px-8 py-3 bg-accent-light text-sm rounded-full text-gray-600`} {...rest} >{children}</button>
+    <button className={` px-8 py-3 bg-accent-light text-sm rounded-full text-gray-600 ${additionalStyles}` } {...rest} >{children}</button>
   )
 }
 

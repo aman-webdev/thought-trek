@@ -55,8 +55,8 @@ const Header = () => {
             )
           ) : null}
           {user.isAuthenticated && isDropdownOpen && <div className="absolute text-sm -left-1/2 top-3/4  rounded-md bg-white px-6 py-2 text-center z-50">
-            <p className=" border-b border-spacing-2 border-gray-200 mb-2 hover:opacity-60">@{user.user.username}</p>
-            <Link to={'/profile'} className=" block border-b border-spacing-2 border-gray-200 mb-2 hover:opacity-60">Profile</Link>
+            <Link to='/profile' className=" block border-b border-spacing-2 border-gray-200 mb-2 hover:opacity-60">@{user.user.username}</Link>
+            <Link to={`/creator/${user.user.username}`} className=" block border-b border-spacing-2 border-gray-200 mb-2 hover:opacity-60">Blogs</Link>
             <p onClick={handleLogout} className="hover:opacity-60">logout</p>
             </div>}
         </div>

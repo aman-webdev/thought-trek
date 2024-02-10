@@ -9,7 +9,7 @@ import { useNavigate } from 'react-router-dom'
 const BlogCard = ({blog}:{blog:Blog}) => {
   const navigate = useNavigate()
   return (
-    <div className='w-2/3 p-4  my- cursor-pointer' onClick={()=>navigate(`/blog/${blog.slug}`)}>
+    <div className='w-full p-4  my- cursor-pointer' onClick={()=>navigate(`/blog/${blog.slug}`)}>
         <header className='flex items-center justify-between mb-2'>
           <BlogTitle title={blog.title.substring(0,20)}/>
          {blog.createdAt &&  <CustomDate date={blog.createdAt} />}
