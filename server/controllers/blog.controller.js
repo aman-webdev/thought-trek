@@ -76,7 +76,7 @@ export const deleteBlog=async(req,res,next)=>{
     try{
 
         const {blogId} = req.params;
-        const {user} = req.body;
+        const {user} = req;
         const blog = await Blog.findOne({_id:blogId})
         if(!blog) return next(errorHandler(400,'Blog not found'))
         if(blog._userId.toString()!==user.id) next(errorHandler(401,'Unauthorized'))
@@ -85,6 +85,36 @@ export const deleteBlog=async(req,res,next)=>{
         res.status(201).json(
             {message:'Deleted Successfully'}
         )
+    }catch(err){
+        next(err)
+    }
+}
+
+export const edit = async(req,res,next) =>{
+    try{    
+
+        const {blogId} = req.params;
+        const {user}  = req;
+
+        const blog = await Blog.findOne({_id:blogId})
+        if(!blog) return next(errorHandler(400,'Blog not found'))
+        if(blog._userId.toString()!==user.id) next(errorHandler(401,'Unauthorized'))
+
+        const {title,desc,body} = req.body;
+        let imageUrl;
+
+        if(req.file) {
+            imageUrl = await uploadImage(req.file.path,req.file.originalname,req.file.mimetype)
+        }
+
+        const updatedBlog = {
+            title,desc,body,
+            ...(imageUrl && {image:imageUrl})
+        }
+
+        const updated = await Blog.findByIdAndUpdate(blogId ,updatedBlog ,{new:true});
+        return res.status(201).json({message:"Updated successfully",data:updated})
+
     }catch(err){
         next(err)
     }

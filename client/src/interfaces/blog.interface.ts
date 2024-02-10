@@ -8,4 +8,5 @@ export default interface Blog {
     categories?:[string]
     createdAt?:string;
     updatedAt?:string;
+    _id?:string
 }

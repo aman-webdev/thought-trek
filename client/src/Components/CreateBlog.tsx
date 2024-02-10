@@ -7,6 +7,8 @@ import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import useFetch from "../hooks/useFetch";
 import { ClipLoader } from "react-spinners";
+import { useNavigate, useParams } from "react-router-dom";
+import Blog from "../interfaces/blog.interface";
 
 const UploadIcon = ({ className }: { className: string }) => (
   <svg
@@ -21,56 +23,107 @@ const UploadIcon = ({ className }: { className: string }) => (
 
 const BlogPage = () => {
   const [text, setText] = useState("");
-  const {register,formState:{errors},handleSubmit} = useForm({
-    defaultValues:{
-      title:"",
-      desc:"",
-      body:""
-    }
-  })
-  const [imageFile,setImageFile] = useState<null | File>(null)
-  const {error:createError,loading:createLoading,data:createData,fetchData:createFetch} = useFetch("POST")
+  const {
+    register,
+    formState: { errors },
+    handleSubmit,
+    setValue,
+  } = useForm({
+    defaultValues: {
+      title: "",
+      desc: "",
+    },
+  });
+  const [imageFile, setImageFile] = useState<null | File>(null);
+  const [imageUrl, setImageUrl] = useState("");
+  const [blogData,setBlogData] = useState<null | Blog>(null)
+  const { blogSlug } = useParams();
+  const {
+    error: createError,
+    loading: createLoading,
+    data: createData,
+    fetchData: createFetch,
+  } = useFetch(blogSlug ? "PUT" : "POST");
+  const {
+    error: fetchBlogError,
+    loading: fetchBlogLoading,
+    data: fetchBlogData,
+    fetchData: fetchBlog,
+  } = useFetch("GET");
 
-  const onDrop = useCallback((acceptedFiles:[File]) => {
-    setImageFile(acceptedFiles[0])
-  }, [imageFile])
+  const onDrop = useCallback(
+    (acceptedFiles: [File]) => {
+      setImageFile(acceptedFiles[0]);
+      setImageUrl(URL.createObjectURL(acceptedFiles[0]));
+    },
+    [imageFile]
+  );
 
+  useEffect(() => {
+    const fetchBlogFromSlug = async () => {
+      if (!blogSlug) return;
+      try {
+        const blogUrl = `/api/blog?slug=${blogSlug}`;
+        await fetchBlog(blogUrl);
+      } catch (err) {}
+    };
+    fetchBlogFromSlug();
+  }, [blogSlug]);
+
+  useEffect(() => {
+    if (!fetchBlogData) return;
+    const { data } = fetchBlogData;
+    if (!data) return;
+    console.log(data, "Data");
+    const { title, desc, body, image } = data["blogs"][0];
+    setBlogData(data['blogs'][0])
+    setValue("title", title);
+    setValue("desc", desc);
+    setText(body);
+    setImageUrl(image);
+  }, [fetchBlogData]);
 
   const { getRootProps, getInputProps } = useDropzone({
-  //@ts-ignore
-    onDrop
-  })
+    //@ts-ignore
+    onDrop,
+  });
 
-  const handleCreateBlog=async(data:{title:string,desc:string})=>{
-    if(createLoading) return
-    try{
-      if(text.length<20) {
-        toast.error("Please enter minimum 20 characters")
-        return
+  const navigate = useNavigate()
+
+  const handleCreateBlog = async (data: { title: string; desc: string }) => {
+    if (createLoading) return;
+    try {
+      if (text.length < 20) {
+        toast.error("Please enter minimum 20 characters");
+        return;
       }
-      const {title,desc} = data
-      const formData = new FormData()
-      formData.append("title",title)
-      formData.append("desc",desc)
-      if(imageFile)formData.append("image",imageFile)
-      formData.append("body",text)
-  
-      await createFetch("/api/blog/create",formData,true)
-    }catch(err){
+      const { title, desc } = data;
+      const formData = new FormData();
+      formData.append("title", title);
+      formData.append("desc", desc);
+      if (imageFile) formData.append("image", imageFile);
+      formData.append("body", text);
+      const apiUrl= !blogSlug || !blogData  ?  `/api/blog/create` : `/api/blog/edit/${blogData._id}`
+      await createFetch(apiUrl, formData, true);
+
+    } catch (err) {}
+  };
+
+  useEffect(() => {
+    if (createError) toast.error(createError);
+    if (createData) {
+      const { message, data } = createData;
+      toast.success(message);
+      setText(""),
+      setImageFile(null)
+      setImageUrl('')
+      setValue("title",'')
+      setValue("desc",'')
+      navigate("/")
 
     }
-    
-  }
+  }, [createError, createData]);
 
-  useEffect(()=>{
-    if(createError) toast.error(createError)
-    if(createData) {
-      const {message,data} = createData
-      toast.success(message)
-    }
-  },[createError,createData])
-
-  
   const modules = {
     toolbar: {
       container: [
@@ -93,56 +146,87 @@ const BlogPage = () => {
     },
   };
 
-  const remoeSelectedImage=(e:any)=>{
-      e.preventDefault()
-      setImageFile(null)
-  }
-
-
-
+  const remoeSelectedImage = (e: any) => {
+    e.preventDefault();
+    setImageFile(null);
+    setImageUrl("");
+  };
 
   return (
     <div className="w-3/4 mx-auto py-8">
       <h1 className="font-display text-5xl text-text-accent tracking-wide mt-4 text-center">
-        Share your thought
+        {blogSlug ? "Edit" : "Share"} your thought
       </h1>
       <Input
         type="text"
         placeholder="Title"
         name="title"
         register={register}
-        validation={{required:{value:true,message:"Title is required"},minLength:{value:10,message:"Title Should have minimum 10 characters"},maxLength:{value:50,message:"Title Should have max 50 characters"}}}
+        validation={{
+          required: { value: true, message: "Title is required" },
+          minLength: {
+            value: 10,
+            message: "Title Should have minimum 10 characters",
+          },
+          maxLength: {
+            value: 50,
+            message: "Title Should have max 50 characters",
+          },
+        }}
         className="w-4/5 rounded-md bg-transparent mt-8 text-5xl  outline-none font-display px-12 py-6"
       />
-          {errors.title?.message ? <p className="text-sm text-red-400 px-12">{errors.title.message.toString()}</p> : null}
+      {errors.title?.message ? (
+        <p className="text-sm text-red-400 px-12">
+          {errors.title.message.toString()}
+        </p>
+      ) : null}
 
       <Input
         type="text"
         name="desc"
         register={register}
-        validation={{required:{value:true,message:"Description is required"},minLength:{value:10,message:"Description Should have minimum 10 characters"}, maxLength:{value:100,message:"Description Should have max 100 characters"}}}
+        validation={{
+          required: { value: true, message: "Description is required" },
+          minLength: {
+            value: 10,
+            message: "Description Should have minimum 10 characters",
+          },
+          maxLength: {
+            value: 100,
+            message: "Description Should have max 100 characters",
+          },
+        }}
         placeholder="Description"
         className="w-full  rounded-md  mt-1 bg-transparent focus:outline-none text-2xl  px-12 py-6 "
       />
-      {errors.desc?.message ? <p className="text-sm text-red-400  px-12">{errors.desc.message.toString()}</p> : null}
+      {errors.desc?.message ? (
+        <p className="text-sm text-red-400  px-12">
+          {errors.desc.message.toString()}
+        </p>
+      ) : null}
 
+      <section className="w-full mt-4 h-96 rounded-lg outline-dashed outline-text-accent outline-2 outline-offset-4 ">
+        <div
+          className="w-full h-full flex flex-col opacity-70 cursor-pointer hover:opacity-100 transition-opacity items-center justify-center font-display text-2xl"
+          {...getRootProps()}
+        >
+          <input {...getInputProps()} />
+          <UploadIcon className="w-1/2 h-1/2" />
+          <p className="opacity-50">
+            Drag 'n' drop some files here, or click to select files
+          </p>
+          {imageUrl && (
+            <div onClick={remoeSelectedImage} className="w-1/5 h-1/5 mx-auto">
+              <img
+                className="w-full h-full object-cover"
+                src={imageUrl}
+                alt=""
+              />
+            </div>
+          )}
+        </div>
+      </section>
 
-     
-          <section className="w-full mt-4 h-96 rounded-lg outline-dashed outline-text-accent outline-2 outline-offset-4 ">
-           <div
-              className="w-full h-full flex flex-col opacity-70 cursor-pointer hover:opacity-100 transition-opacity items-center justify-center font-display text-2xl"
-              {...getRootProps()}
-            >
-              <input {...getInputProps()} />
-              <UploadIcon className="w-1/2 h-1/2" />
-              <p className="opacity-50">
-                Drag 'n' drop some files here, or click to select files
-              </p>
-            {imageFile&& <div onClick={remoeSelectedImage} className="w-1/5 h-1/5 mx-auto"><img className="w-full h-full object-cover" src={URL.createObjectURL(imageFile)} alt="" /></div>}
-
-            </div> 
-          </section>
-   
       <div className="mt-8">
         <ReactQuill
           placeholder="Start Writing"
@@ -153,7 +237,12 @@ const BlogPage = () => {
           onChange={setText}
         />
       </div>
-     <Button additionalStyles="block w-1/3 mx-auto my-4 bg-accent-light rounded-md text-text-accent text-md font-bold uppercase hover:opacity-80 " onClick={handleSubmit(handleCreateBlog)} >{createLoading ? <ClipLoader size={30} color="#3F3D56" />:  "Create"}</Button>
+      <Button
+        additionalStyles="block w-1/3 mx-auto my-4 bg-accent-light rounded-md text-text-accent text-md font-bold uppercase hover:opacity-80 "
+        onClick={handleSubmit(handleCreateBlog)}
+      >
+        {createLoading ? <ClipLoader size={30} color="#3F3D56" /> : blogSlug ? "Edit" : "Create"}
+      </Button>
     </div>
   );
 };

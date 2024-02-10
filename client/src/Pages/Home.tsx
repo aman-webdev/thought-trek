@@ -31,6 +31,8 @@ const Home = () => {
   }, [blogsData]);
 
   useEffect(() => {
+    setBlogs([])
+    setTotalBlogs(0)
     const fetchUrl = username
       ? `/api/blog?username=${username}`
       : "/api/blog";
