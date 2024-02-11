@@ -81,11 +81,11 @@ const Home = () => {
 
                   <p className="text-4xl font-display text-center text-text-accent my-8">
                     Uhh..Oh No Blogs Found{" "}
-                    {user.username !== username && (
+                    {user?.username !== username && (
                       <span className="text-accent"> for {username}</span>
                     )}
                   </p>
-                  {isAuthenticated && username === user.username && (
+                  {isAuthenticated && username === user?.username && (
                     <Link to={"/blog/create"}>
                       <Button>Create?</Button>
                     </Link>

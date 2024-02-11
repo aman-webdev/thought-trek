@@ -168,10 +168,6 @@ const BlogPage = () => {
             value: 10,
             message: "Title Should have minimum 10 characters",
           },
-          maxLength: {
-            value: 50,
-            message: "Title Should have max 50 characters",
-          },
         }}
         className="w-4/5 rounded-md bg-transparent mt-8 text-5xl  outline-none font-display px-12 py-6"
       />
@@ -190,10 +186,6 @@ const BlogPage = () => {
           minLength: {
             value: 10,
             message: "Description Should have minimum 10 characters",
-          },
-          maxLength: {
-            value: 100,
-            message: "Description Should have max 100 characters",
           },
         }}
         placeholder="Description"
