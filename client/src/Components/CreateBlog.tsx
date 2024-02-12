@@ -157,19 +157,10 @@ const BlogPage = () => {
       <h1 className="font-display text-5xl text-text-accent tracking-wide mt-4 text-center">
         {blogSlug ? "Edit" : "Share"} your thought
       </h1>
-      <Input
-        type="text"
+      <textarea
         placeholder="Title"
-        name="title"
-        register={register}
-        validation={{
-          required: { value: true, message: "Title is required" },
-          minLength: {
-            value: 10,
-            message: "Title Should have minimum 10 characters",
-          },
-        }}
-        className="w-4/5 rounded-md bg-transparent mt-8 text-5xl  outline-none font-display px-12 py-6"
+        {...register("title")} 
+        className="w-full rounded-md bg-transparent mt-8 text-5xl  outline-none font-display px-12 py-6"
       />
       {errors.title?.message ? (
         <p className="text-sm text-red-400 px-12">
@@ -177,18 +168,10 @@ const BlogPage = () => {
         </p>
       ) : null}
 
-      <Input
-        type="text"
-        name="desc"
-        register={register}
-        validation={{
-          required: { value: true, message: "Description is required" },
-          minLength: {
-            value: 10,
-            message: "Description Should have minimum 10 characters",
-          },
-        }}
+      <textarea
+        {...register("desc")}
         placeholder="Description"
+        rows={3}
         className="w-full  rounded-md  mt-1 bg-transparent focus:outline-none text-2xl  px-12 py-6 "
       />
       {errors.desc?.message ? (
