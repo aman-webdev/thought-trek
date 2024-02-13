@@ -7,6 +7,7 @@ export const signin = async (req, res,next) => {
   try{
 
     const {usernameOrEmail,password} = req.body;
+    console.log(usernameOrEmail,password,"s")
     if(!usernameOrEmail || !password) {
       next(errorHandler(404,"Email / Username or password missing"))
       return;
