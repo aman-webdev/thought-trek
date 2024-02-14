@@ -1,8 +1,11 @@
+import mongoose from "mongoose"
 import errorHandler from "../utils/errorHandler.js"
 import { uploadImage } from "../utils/initFirebase.js";
 import { v4 as uuidv4 } from 'uuid'
 import Blog from "../models/blog.model.js"
 import User from "../models/user.model.js"
+import Vote from "../models/vote.model.js"
+
 
 
 export const create=async(req,res,next)=>{
@@ -11,7 +14,7 @@ export const create=async(req,res,next)=>{
         const {title,desc,body} = req.body;
         if(!title || !desc || !body) next(errorHandler(400,"Required Parameters not found"))
 
-        const slug = `${uuidv4()}-${title.toLowerCase().split(" ").join("-").replace(/[^a-zA-Z0-9-]/g,'')}`
+        const slug = `${uuidv4()}-${title.toLowerCase().trim().substring(0,10).split(" ").join("-").replace(/[^a-zA-Z0-9-]/g,'')}`
         let updatedUrl;
         if(req.file){
              updatedUrl = await uploadImage(req.file.path,req.file.originalname,req.file.mimetype)
@@ -114,6 +117,93 @@ export const edit = async(req,res,next) =>{
 
         const updated = await Blog.findByIdAndUpdate(blogId ,updatedBlog ,{new:true});
         return res.status(201).json({message:"Updated successfully",data:updated})
+
+    }catch(err){
+        next(err)
+    }
+}
+
+
+
+export const getBlogBySlug=async(req,res,next)=>{
+    try{
+
+        const {blogSlug} = req.params
+        const result = await Blog.aggregate([
+            { $match: { slug: blogSlug } },
+            {
+                $lookup: {
+                  from: 'votes',
+                  localField: '_id',
+                  foreignField: '_parentId',
+                  as: 'likes'
+                }
+              },
+            {
+              $lookup: {
+                from: 'comments',
+                localField: '_id',
+                foreignField: '_blogId',
+                as: 'comments'
+              }
+            },
+            {
+                $unwind: {
+                   path: "$comments",
+                preserveNullAndEmptyArrays: true
+                }
+            },
+            {
+                $lookup: {
+                    from:"votes",
+                    localField:"comments._id",
+                    foreignField:"_parentId",
+                    as:"comments.likes"
+                }
+            },
+            {
+                $group: {
+                    _id: "$_id",
+                    "_userId":{$first:"$_userId"},
+                    title: { $first: "$title" },
+                    desc: { $first: "$desc" },
+                    slug: { $first: "$slug" },
+                    body:{ $first: "$body" },
+                    image:{ $first: "$image" },
+                    likes:{ $first : "$likes"},
+                    comments: { $push: "$comments" },
+                }
+            }
+            
+          ])
+
+          if(!result || !result?.length) return next(errorHandler(404,"Blog not found"))
+
+          await Blog.populate(result,{path:"_userId",select:['username','profilePicture']})
+          return res.status(200).json({data:result[0]})
+        
+    }catch(err){
+        next(err)
+    }
+}
+
+export const likeBlog=async(req,res,next)=>{
+    try{
+        const {blogId} = req.params;
+        const blog = await Blog.findOne({_id:blogId});
+        if(!blog) next(errorHandler(404,"Blog not found"))
+
+        const vote = await Vote.findOne({_parentId:blogId})
+        if(!vote) {
+            await Vote.create({_oarentId:blogId,parentType:"blog"})
+            await Blog.findByIdAndUpdate(blogId,{totalLikes:blog.totalLikes + 1})
+            return res.status(200).json({message:"Success"})
+        }
+
+        await Vote.findByIdAndDelete(vote)
+        await Blog.findByIdAndUpdate(blogId,{totalLikes:blog.totalLikes - 1})
+        return res.status(200).json({message:"Success"})
+
 
     }catch(err){
         next(err)

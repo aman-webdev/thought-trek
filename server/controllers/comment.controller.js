@@ -26,30 +26,24 @@ export const getBlogComments=async(req,res,next)=>{
         const {blogId} = req.params
         console.log(blogId)
 
-        const result = await Blog.aggregate([
-            { $match: { _id: new mongoose.Types.ObjectId(blogId) } },
+        const result = await Comment.aggregate([
+            { $match: { _blogId: new mongoose.Types.ObjectId(blogId) } },
+           
             {
-              $lookup: {
-                from: 'comments',
-                localField: '_id',
-                foreignField: '_blogId',
-                as: 'comments'
-              }
+                $lookup: {
+                    from:"votes",
+                    localField:"_id",
+                    foreignField:"_parentId",
+                    as:"likes"
+                }
             },
-            {
-              $lookup: {
-                from: 'votes',
-                localField: 'comments._id',
-                foreignField: '_parentId',
-                as: 'comments.votes'
-              }
-            }
+           
+            
           ])
 
-          console.log(result,"Res")
 
 
-        return res.status(200).json({data:""})
+        return res.status(200).json({data:result[0]})
 
 
     }catch(err){

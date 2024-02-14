@@ -19,7 +19,7 @@ const BlogPage = () => {
     const fetchBlogData = async () => {
       if (!blogSlug) return;
       try {
-        await fetchData(`/api/blog?slug=${blogSlug}`);
+        await fetchData(`/api/blog/${blogSlug}`);
       } catch (err) {}
     };
 
@@ -29,7 +29,7 @@ const BlogPage = () => {
   useEffect(() => {
     if (!data) return;
     //@ts-ignore
-    const blog = data?.data["blogs"][0];
+    const blog = data?.data;
     setBlogData(blog);
   }, [data]);
 
@@ -58,7 +58,7 @@ const BlogPage = () => {
               {blogData.createdAt && <CustomDate date={blogData.createdAt} />}
             </div>
             <p className="mt-12 text-lg">{blogData.desc}</p>
-            <div className="mt-12">
+            <div className="mt-12  border-text-accent w-5/6 mx-auto border-opacity-55 border-t">
               <ReactQuill readOnly value={blogData.body} theme="bubble" />
             </div>
           </div>

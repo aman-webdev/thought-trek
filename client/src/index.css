@@ -36,6 +36,10 @@ body{
     font-size: 1rem;
 }
 
-.ql-container  h1,.ql-container h2,.ql-container h3,.ql-container h4,.ql-container h5,.ql-container a,.ql-container p,.ql-container span,.ql-container img{
+.ql-container  h1,.ql-container h2,.ql-container h3,.ql-container h4,.ql-container h5 {
     margin-top: 16px;
+}
+
+.ql-container a,.ql-container p,.ql-container span,.ql-container img {
+margin-top: 6px;
 }

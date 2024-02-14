@@ -28,6 +28,10 @@ const blogSchema = new mongoose.Schema({
     },
     categories:{
         type:[String]
+    },
+    totalLikes:{
+        type:Number,
+        default:0
     }
 },{timestamps:true})
 

@@ -61,12 +61,7 @@ const Home = () => {
                 : "w-4/5"
             }`}
           >
-            {!username && (
-              <h1 className="text-6xl my-8  font-display text-black">
-                Latest Thoughts
-              </h1>
-            )}
-
+           
             <div className=" ">
               {blogs.length ? (
                 <div className="w-2/3">
@@ -81,13 +76,13 @@ const Home = () => {
 
                   <p className="text-4xl font-display text-center text-text-accent my-8">
                     Uhh..Oh No Blogs Found{" "}
-                    {user?.username !== username && (
+                    { username && user?.username !== username  && (
                       <span className="text-accent"> for {username}</span>
                     )}
                   </p>
                   {isAuthenticated && username === user?.username && (
                     <Link to={"/blog/create"}>
-                      <Button>Create?</Button>
+                      <Button>Create</Button>
                     </Link>
                   )}
                 </div>
