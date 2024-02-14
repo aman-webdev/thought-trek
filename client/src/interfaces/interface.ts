@@ -12,8 +12,9 @@ export  interface Blog {
     createdAt?:string;
     updatedAt?:string;
     _id?:string;
-    comments:Comment[];
-    likes:Vote[]
+    comments?:Comment[];
+    likes?:Vote[]
+    totalLikes:number
 }
 
 export interface Comment {

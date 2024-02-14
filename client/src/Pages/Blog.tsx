@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import useFetch from "../hooks/useFetch";
 import {Blog} from "../interfaces/interface";
@@ -10,11 +10,17 @@ import ReactQuill from "react-quill";
 import "react-quill/dist/quill.bubble.css";
 import Comment from "../Components/Comment";
 import { Button } from "../Components";
+import Like from "../Components/Like";
+import UserContext from "../context/userContext";
 
 const BlogPage = () => {
   const { blogSlug } = useParams();
   const { data, fetchData, loading } = useFetch("GET");
   const { error:createError, fetchData:createComment } = useFetch("POST");
+  const { error:blogLikeError, fetchData:likeBlog } = useFetch("PATCH");
+
+  const {user : {isAuthenticated,user}} = useContext(UserContext)
+
 
   const [blogData, setBlogData] = useState<null | Blog>(null);
   const [newComment,setNewComment] = useState('')
@@ -41,6 +47,10 @@ const BlogPage = () => {
   const handleCreateComment=()=>{
     createComment(`/api/comment/create`,{blogId:blogData?._id,comment:newComment})
   }
+
+  const handleLike=()=>likeBlog(`/api/blog/like/${blogData?._id}`)
+
+  const hasUserLikedBlog =  blogData?.likes?.find(like=>like._userId===user?._id)
 
   return (
     <div className="w-5/6 mx-auto h-screen py-16">
@@ -71,6 +81,7 @@ const BlogPage = () => {
               <div className="w-1 h-12 bg-text-accent"></div>
               {blogData.createdAt && <CustomDate date={blogData.createdAt} />}
             </div>
+          {isAuthenticated &&  <Like  className={`w-24 h-24 mx-auto my-2 fill-none  transition-colors ease-in-out ${!hasUserLikedBlog ? "stroke-text-accent   hover:fill-red-400 cursor-pointer" : "hover:stroke-text-accent  stroke-red-400 fill-red-400 hover:fill-none cursor-pointer"} ` } onClick={handleLike} />}
             <p className="mt-6  text-lg">{blogData.desc}</p>
             <div className="bg-white px-2 py-4 mt-12">
               <div className="rounded-sm shadow-sm  w-5/6 mx-auto ">
@@ -89,7 +100,7 @@ const BlogPage = () => {
                 />
               {newComment && <Button additionalStyles="my-4" onClick={handleCreateComment}>Create</Button>}
                 </div>
-                {blogData.comments.map((comment) => (
+                {blogData.comments && blogData.comments.map((comment) => (
                   <Comment
                     likes={comment.likes}
                     commentId={comment._id}

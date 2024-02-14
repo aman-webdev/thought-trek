@@ -192,12 +192,13 @@ export const getBlogBySlug=async(req,res,next)=>{
 export const likeBlog=async(req,res,next)=>{
     try{
         const {blogId} = req.params;
+        const {id} = req.user;
         const blog = await Blog.findOne({_id:blogId});
         if(!blog) next(errorHandler(404,"Blog not found"))
 
         const vote = await Vote.findOne({_parentId:blogId})
         if(!vote) {
-            await Vote.create({_oarentId:blogId,parentType:"blog"})
+            await Vote.create({_parentId:blogId,parentType:"blog",_userId:id})
             await Blog.findByIdAndUpdate(blogId,{totalLikes:blog.totalLikes + 1})
             return res.status(200).json({message:"Success"})
         }
