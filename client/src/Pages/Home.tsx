@@ -4,7 +4,7 @@ import NoBlogIcon from "../assets/nonblogs.svg?react";
 import UserContext from "../context/userContext";
 import useFetch from "../hooks/useFetch";
 import { BarLoader } from "react-spinners";
-import Blog from "../interfaces/blog.interface";
+import Blog from "../interfaces/interface";
 import BlogCard from "../Components/Blog/BlogCard";
 import { Link, useLocation, useParams } from "react-router-dom";
 import { Button } from "../Components";

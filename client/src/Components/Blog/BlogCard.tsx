@@ -1,5 +1,5 @@
 import React from 'react'
-import Blog from '../../interfaces/blog.interface'
+import Blog from '../../interfaces/interface'
 import BlogTitle from './BlogTitle'
 import BlogImage from './BlogImage'
 import CustomDate from '../Date'

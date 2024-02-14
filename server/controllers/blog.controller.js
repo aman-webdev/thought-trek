@@ -165,6 +165,8 @@ export const getBlogBySlug=async(req,res,next)=>{
                 $group: {
                     _id: "$_id",
                     "_userId":{$first:"$_userId"},
+                    "createdAt":{$first:"$createdAt"},
+
                     title: { $first: "$title" },
                     desc: { $first: "$desc" },
                     slug: { $first: "$slug" },

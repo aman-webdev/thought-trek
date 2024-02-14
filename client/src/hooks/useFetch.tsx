@@ -4,7 +4,7 @@ import useSignout from "./useSignout"
 import { useNavigate } from "react-router-dom"
 import toast from "react-hot-toast"
 
-const useFetch = (method:"GET"| "POST" | "PUT" | "DELETE") => {
+const useFetch = (method:"GET"| "POST" | "PUT" | "DELETE" | "PATCH") => {
     const [data,setData] = useState()
     const [error,setError]=useState('')
     const [loading,setLoading] = useState(false)
@@ -28,9 +28,11 @@ const useFetch = (method:"GET"| "POST" | "PUT" | "DELETE") => {
             setData(response)
             setLoading(false)
         } catch(e:any){
-           
             setLoading(false)
+            setError(e?.message || "Something went wrong")
+
             if(e) {
+
                 if(e.message?.includes("jwt expired")) {
                     toast.error("Your session has expired")
                     localStorage.clear()
@@ -39,7 +41,7 @@ const useFetch = (method:"GET"| "POST" | "PUT" | "DELETE") => {
 
                 }
             }
-            throw new Error(e.message)
+          
 
         }
     }

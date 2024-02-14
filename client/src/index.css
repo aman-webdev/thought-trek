@@ -43,3 +43,7 @@ body{
 .ql-container a,.ql-container p,.ql-container span,.ql-container img {
 margin-top: 6px;
 }
+
+.comment textarea{
+    resize: none;
+}
