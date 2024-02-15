@@ -196,7 +196,7 @@ export const likeBlog=async(req,res,next)=>{
         const blog = await Blog.findOne({_id:blogId});
         if(!blog) next(errorHandler(404,"Blog not found"))
 
-        const vote = await Vote.findOne({_parentId:blogId})
+        const vote = await Vote.findOne({_parentId:blogId,_userId:id})
         if(!vote) {
             await Vote.create({_parentId:blogId,parentType:"blog",_userId:id})
             await Blog.findByIdAndUpdate(blogId,{totalLikes:blog.totalLikes + 1})

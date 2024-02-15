@@ -26,6 +26,8 @@ const Comment = ({
   const [commentValue,setCommentValue] = useState(comment)
   const [isEdit,setIsEdit] = useState(false)
   const textRef = useRef<HTMLTextAreaElement>(null)
+  const buttonRef = useRef<HTMLButtonElement>(null)
+  const wrappedRef = useRef<HTMLDivElement>(null)
 
 
   const {error:editError,fetchData:editComment} = useFetch("PATCH")
@@ -43,23 +45,30 @@ const Comment = ({
   },[editError,likeError])
 
 
-
-  const handleOutsideClick=(e:React.FocusEvent<HTMLElement>)=>{
-    if(!e.currentTarget.contains(e.relatedTarget)) setIsEdit(false)
-  
+  const unAuthError=(action:string)=>{
+    if(!isAuthenticated) return `You need to be signed in to ${action}`
+    return ''
   }
 
+  
+
   const handleEdit =() => {
+     const isErr = unAuthError('Edit')
+     if(isErr) return toast.error(isErr)
      editComment(`/api/comment/edit/${commentId}`,{comment:commentValue})
     
   }
 
   const handleLike=async()=>{
+    const isErr = unAuthError('Like')
+    if(isErr) return toast.error(isErr)
      likeComment(`/api/comment/like/${commentId}`)
 
   }
 
   const handleDelete=()=>{
+    const isErr = unAuthError('Delete')
+    if(isErr) return toast.error(isErr)
      deleteComment(`/api/comment/delete/${commentId}`)
   } 
 
@@ -70,18 +79,19 @@ const Comment = ({
       <div className="my-6  w-full items-center outline-dashed p-3 outline-offset-8 outline-text-accent ">
         <div className=" w-full flex items-center gap-3   ">
           <div className="text-center ">
-            {isAuthenticated && (
-              <Like onClick={handleLike} className={`w-6 cursor-pointer h-6 fill-none transition-colors ${!hasUserLiked ? 'stroke-text-accent fill-none hover:stroke-none hover:fill-red-400' : 'stroke-none fill-red-400 hover:stroke-text-accent hover:fill-none'}  `} />
-            )}
+            
+              <Like onClick={handleLike} className={`w-6 cursor-pointer h-6 fill-none transition-colors ${!hasUserLiked  ? 'stroke-text-accent fill-none hover:stroke-none hover:fill-red-400' : 'stroke-none fill-red-400 hover:stroke-text-accent hover:fill-none'}  `} />
+           
             {totalLikes ? (
               <p className="mt-[4px] text-xs">{totalLikes}</p>
             ) : null}
           </div>
 
-          <textarea onBlur={handleOutsideClick} value={commentValue} onChange={(e)=>setCommentValue(e.target.value)} ref={textRef} readOnly={!isEdit} className="w-full h-full outline-none ">{comment}</textarea>
+          <textarea   value={commentValue} onChange={(e)=>setCommentValue(e.target.value)} ref={textRef} readOnly={!isEdit} className="w-full h-full outline-none "/>
         </div>
       </div>
       {isAuthenticated && user?._id === userId ?
+
       !isEdit ?  (
         <div className="flex text-xs mt-2 items-center gap-3 text-gray-400">
           <p className="cursor-pointer hover:text-black" onClick={()=>{
@@ -90,7 +100,12 @@ const Comment = ({
             }}>Edit</p>
           <p onClick={handleDelete} className="cursor-pointer hover:text-black" >Delete</p>
         </div>
-      ) : <Button onClick={handleEdit}>Edit</Button> : null}
+      ) :<div className=" flex gap-4"> <Button  onClick={handleEdit}>Edit</Button>
+      <Button  onClick={()=>{
+        setIsEdit(false)
+        setCommentValue(comment)
+      }}>Cancel</Button>
+      </div> : null}
     </div>
   );
 };

@@ -14,6 +14,8 @@ import path from "path"
 
 config()
 
+const PORT = process.env.PORT || 3000
+
 mongoose.connect(process.env.MONGOOSE_CONNECTION_URI).then(()=>{
     console.log('Connection Established')
 }).catch(err=>console.log('Error connecting to DB ',err.message))
@@ -31,7 +33,8 @@ app.use("/api/blog",blogRoute)
 app.use("/api/comment",commentRoute)
 
 
-app.listen(3000,()=>{
+app.listen(PORT,()=>{
+    console.log(`Server listening on ${PORT}`)
 })
 
 app.use(ErrorMiddleware)

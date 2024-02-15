@@ -38,9 +38,9 @@ const Header = () => {
       <div
         className="flex justify-center items-center gap-6 cursor-pointer"
       >
-       {user.isAuthenticated &&  <Button onClick={()=>navigate("/blog/create")} additionalStyles="hover:bg-accent transition ease-in-out">
-          Write
-        </Button>}
+        <Button onClick={()=>navigate( user.isAuthenticated ? "/blog/create" : "/sign-in")} additionalStyles="hover:bg-accent transition ease-in-out">
+         {user.isAuthenticated ? "Write" : "Sign In"}
+        </Button>
    
         <div className="relative px-2" onClick={() => setIsDropdownOpen(!isDropdownOpen)}>
           {user.isAuthenticated ? (

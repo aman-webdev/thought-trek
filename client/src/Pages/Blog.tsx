@@ -12,6 +12,7 @@ import Comment from "../Components/Comment";
 import { Button } from "../Components";
 import Like from "../Components/Like";
 import UserContext from "../context/userContext";
+import toast from "react-hot-toast";
 
 const BlogPage = () => {
   const { blogSlug } = useParams();
@@ -45,10 +46,14 @@ const BlogPage = () => {
   }, [data]);
 
   const handleCreateComment=()=>{
+    if(!isAuthenticated) return toast.error("You need to be signed in to Comment")
     createComment(`/api/comment/create`,{blogId:blogData?._id,comment:newComment})
   }
 
-  const handleLike=()=>likeBlog(`/api/blog/like/${blogData?._id}`)
+  const handleLike=()=> {
+    if(!isAuthenticated) return toast.error("You need to be signed in to Like")
+    likeBlog(`/api/blog/like/${blogData?._id}`)
+  }
 
   const hasUserLikedBlog =  blogData?.likes?.find(like=>like._userId===user?._id)
 
@@ -81,7 +86,7 @@ const BlogPage = () => {
               <div className="w-1 h-12 bg-text-accent"></div>
               {blogData.createdAt && <CustomDate date={blogData.createdAt} />}
             </div>
-          {isAuthenticated &&  <Like  className={`w-24 h-24 mx-auto my-2 fill-none  transition-colors ease-in-out ${!hasUserLikedBlog ? "stroke-text-accent   hover:fill-red-400 cursor-pointer" : "hover:stroke-text-accent  stroke-red-400 fill-red-400 hover:fill-none cursor-pointer"} ` } onClick={handleLike} />}
+           <Like  className={`w-12 h-12 mx-auto my-2 fill-none  transition-colors ease-in-out ${!hasUserLikedBlog ? "stroke-text-accent   hover:fill-red-400 cursor-pointer" : "hover:stroke-text-accent  stroke-red-400 fill-red-400 hover:fill-none cursor-pointer"} ` } onClick={handleLike} />
             <p className="mt-6  text-lg">{blogData.desc}</p>
             <div className="bg-white px-2 py-4 mt-12">
               <div className="rounded-sm shadow-sm  w-5/6 mx-auto ">
