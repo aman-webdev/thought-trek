@@ -56,10 +56,10 @@ export const getAllBlogs=async(req,res,next) =>{
             ...(req.query.searchTerm && {
                 $or: [
                     { 
-                        title:{$regex : req.query.searchTerm ,$options:"1"}
+                        title:{$regex : req.query.searchTerm ,$options:"i"}
                     },
                     { 
-                        desc:{$regex : req.query.searchTerm ,$options:"1"}
+                        desc:{$regex : req.query.searchTerm ,$options:"i"}
                     }
                 ]
             })

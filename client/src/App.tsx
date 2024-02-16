@@ -12,6 +12,7 @@ import CreateBlog from "./Components/CreateBlog";
 import Blog from "./Pages/Blog";
 import NotFound from "./Pages/NotFound";
 import { BlogContextProvider } from "./context/blogContext";
+import { Search } from "./Pages/Search";
 
 const Layout = () => {
   return (
@@ -49,6 +50,10 @@ const router = createBrowserRouter([
             <DashProfile />
           </PrivateRoute>
         ),
+      },
+      {
+        path:"/search",
+        element: <Search/>
       },
       {
         path: "/sign-in",
@@ -105,7 +110,7 @@ const router = createBrowserRouter([
 ]);
 
 const App = () => (
-  <div className="px-8">
+  <div className=" px-2 md:px-8">
     <GoogleOAuthProvider clientId={import.meta.env.VITE_CLIENT_ID}>
       <UserProvider>
         <BlogContextProvider>

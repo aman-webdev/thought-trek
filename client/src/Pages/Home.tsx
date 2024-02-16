@@ -54,18 +54,14 @@ const Home = () => {
         </div>
       ) : (
         <div className="w-full h-full flex">
-          {blogs.length ? <div className="w-1/5 "></div> : null}
+        
           <div
-            className={`${
-              !blogs.length
-                ? "w-full h-full flex items-center justify-center"
-                : "w-4/5"
-            }`}
+            className={`w-4/5 mx-auto`}
           >
            
-            <div className=" ">
+            <div className="w-full ">
               {blogs.length ? (
-                <div className="w-2/3">
+                <div className="w-full flex gap-6 justify-center">
                   {blogs.map((blog:BlogInterface) => (
                     <BlogCard blog={blog} key={blog.slug} />
                   ))}
