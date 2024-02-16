@@ -22,12 +22,12 @@ export interface Comment {
     _blogId:string;
     _userId:string;
     totalLikes:number;
-    _id:string;
+    _id?:string;
     likes:Vote[]
 }
 
 export interface Vote {
-    _id:string;
+    _id?:string;
     _userId:string;
     parentId:string;
     parentType:"Blog" | "Comment" ;

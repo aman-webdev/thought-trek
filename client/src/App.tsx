@@ -11,6 +11,7 @@ import DashProfile from "./Components/DashProfile";
 import CreateBlog from "./Components/CreateBlog";
 import Blog from "./Pages/Blog";
 import NotFound from "./Pages/NotFound";
+import { BlogContextProvider } from "./context/blogContext";
 
 const Layout = () => {
   return (
@@ -107,7 +108,9 @@ const App = () => (
   <div className="px-8">
     <GoogleOAuthProvider clientId={import.meta.env.VITE_CLIENT_ID}>
       <UserProvider>
-        <RouterProvider router={router} />
+        <BlogContextProvider>
+           <RouterProvider router={router} />
+        </BlogContextProvider>
       </UserProvider>
       <Toaster />
     </GoogleOAuthProvider>

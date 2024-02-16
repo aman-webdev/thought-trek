@@ -4,14 +4,15 @@ import NoBlogIcon from "../assets/nonblogs.svg?react";
 import UserContext from "../context/userContext";
 import useFetch from "../hooks/useFetch";
 import { BarLoader } from "react-spinners";
-import Blog from "../interfaces/interface";
+import {Blog as BlogInterface} from "../interfaces/interface";
 import BlogCard from "../Components/Blog/BlogCard";
 import { Link, useLocation, useParams } from "react-router-dom";
 import { Button } from "../Components";
+import BlogContext from "../context/blogContext";
 
 const Home = () => {
   const { data: blogsData, error, loading, fetchData } = useFetch("GET");
-  const [blogs, setBlogs] = useState<Blog[]>([]);
+  const {setBlogs , blogs} = useContext(BlogContext)
   const [totalBlogs, setTotalBlogs] = useState(0);
 
   const { username } = useParams();
@@ -65,7 +66,7 @@ const Home = () => {
             <div className=" ">
               {blogs.length ? (
                 <div className="w-2/3">
-                  {blogs.map((blog) => (
+                  {blogs.map((blog:BlogInterface) => (
                     <BlogCard blog={blog} key={blog.slug} />
                   ))}
                   {blogs.length < totalBlogs && <Button additionalStyles="mx-auto block my-6" onClick={handleShowMore}>Show More</Button>}

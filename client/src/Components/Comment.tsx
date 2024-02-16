@@ -4,6 +4,7 @@ import useFetch from "../hooks/useFetch";
 import toast from "react-hot-toast";
 import Button from "./Button";
 import Like from "./Like";
+import BlogContext from "../context/blogContext";
 
 const Comment = ({
   comment,
@@ -22,6 +23,8 @@ const Comment = ({
     user: { user, isAuthenticated },
   } = useContext(UserContext);
 
+  const {likeBlogComment,deleteBlogComment , editBlogComment} = useContext(BlogContext)
+
 
   const [commentValue,setCommentValue] = useState(comment)
   const [isEdit,setIsEdit] = useState(false)
@@ -30,9 +33,9 @@ const Comment = ({
   const wrappedRef = useRef<HTMLDivElement>(null)
 
 
-  const {error:editError,fetchData:editComment} = useFetch("PATCH")
-  const {error:likeError,fetchData:likeComment} = useFetch("PATCH")
-  const {error:deleteError,fetchData:deleteComment} = useFetch("DELETE")
+  const {error:editError,fetchData:editComment,data:editCommentData} = useFetch("PATCH")
+  const {error:likeError,fetchData:likeComment,data:likeCommentData} = useFetch("PATCH")
+  const {error:deleteError,fetchData:deleteComment , data:deleteCommentData} = useFetch("DELETE")
 
 
   const hasUserLiked = likes.find(like=>like._userId===user?._id)
@@ -40,9 +43,19 @@ const Comment = ({
 
   useEffect(()=>{
     if(editError) toast.error(editError)
-    if(likeError) toast.error(likeError)
+    if(editCommentData) editBlogComment(commentId , commentValue) 
 
-  },[editError,likeError])
+  },[editError,editCommentData])
+
+  useEffect(()=>{
+    if(likeError) toast.error(likeError)
+    if(likeCommentData) likeBlogComment(user._id,commentId)
+  },[likeError,likeCommentData])
+
+  useEffect(()=>{
+    if(deleteError) toast.error(likeError)
+    if(deleteCommentData) deleteBlogComment(commentId)
+  },[deleteError,deleteCommentData])
 
 
   const unAuthError=(action:string)=>{
@@ -56,6 +69,7 @@ const Comment = ({
      const isErr = unAuthError('Edit')
      if(isErr) return toast.error(isErr)
      editComment(`/api/comment/edit/${commentId}`,{comment:commentValue})
+     setIsEdit(false)
     
   }
 
@@ -72,7 +86,7 @@ const Comment = ({
      deleteComment(`/api/comment/delete/${commentId}`)
   } 
 
-  if(!commentId) return
+  if(!comment) return
 
   return (
     <div className="comment">
