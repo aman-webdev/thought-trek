@@ -16,6 +16,9 @@ config()
 
 const PORT = process.env.PORT || 3000
 
+const __dirname = path.resolve()
+
+
 mongoose.connect(process.env.MONGOOSE_CONNECTION_URI).then(()=>{
     console.log('Connection Established')
 }).catch(err=>console.log('Error connecting to DB ',err.message))
@@ -26,11 +29,16 @@ app.use(cors())
 app.use(express.json())
 app.use(cookieParser())
 app.use(express.urlencoded({ extended:true}))
+app.use(express.static(path.join(__dirname,'../client','dist')))
 
 app.use("/api/user",userRoute)
 app.use("/api/auth",authRoute)
 app.use("/api/blog",blogRoute)
 app.use("/api/comment",commentRoute)
+
+app.get("*",(req,res)=>{
+    res.sendFile(path.join(__dirname,'../client','dist','index.html'))
+})
 
 
 app.listen(PORT,()=>{

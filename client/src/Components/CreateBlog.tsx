@@ -8,7 +8,7 @@ import toast from "react-hot-toast";
 import useFetch from "../hooks/useFetch";
 import { ClipLoader } from "react-spinners";
 import { useNavigate, useParams } from "react-router-dom";
-import Blog from "../interfaces/interface";
+import {Blog} from "../interfaces/interface";
 
 const UploadIcon = ({ className }: { className: string }) => (
   <svg

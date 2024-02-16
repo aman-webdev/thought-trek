@@ -1,7 +1,7 @@
 import { useState } from "react";
 
 import { createBrowserRouter, Outlet, RouterProvider } from "react-router-dom";
-import { About, Dashboard, Home, Projects, SignIn, SignUp } from "./Pages";
+import { About, Home, Projects, SignIn, SignUp } from "./Pages";
 import { Header } from "./Components";
 import toast, { Toaster } from "react-hot-toast";
 import { UserProvider } from "./context/userContext";
@@ -63,14 +63,7 @@ const router = createBrowserRouter([
         path: "/sign-up",
         element: <SignUp />,
       },
-      {
-        path: "/dashboard",
-        element: (
-          <PrivateRoute>
-            <Dashboard />
-          </PrivateRoute>
-        ),
-      },
+     
       {
         path: "/projects",
         element: <Projects />,
